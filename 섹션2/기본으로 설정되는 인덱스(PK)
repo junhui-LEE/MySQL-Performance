@@ -1,0 +1,58 @@
+MySQL과 Oracle에서 제공되는 기능이나 문법이 생각보다 다른것들이 많았다. 꼼꼼하게 직접 Oracle환경과 MySQL환경에서 실습을 진행해 보면서 실행을 했다. 
+우선 문법은 Oracle에서 INSERT INTO users VALUES(1, 'a'),(3, 'b'),(5, 'c'),(7, 'c') 이런식으로 한줄에 여려 값을 삽입하도록 코드를 짜는 문법을 지원하지 않는다.
+INSERT ALL
+  INTO users VALUES(1, 'a')
+  INTO users VALUES(3, 'b')
+  INTO users VALUES(5, 'c')
+  INTO users VALUES(7, 'd')
+SELECT * FROM dual;  이런식으로 구현을 해야 한다. 
+
+그리고 
+
+MySQL에서 인덱스는 시스템 내부적으로 생기기 때문에 인덱스를 DBeaver나 Workbench에서 확인할 수 없다.
+( SHOW INDEX FROM 테이블명;) 하면 볼 수 있다.
+Oracle에서 테이블의 특정 컬럼에 PK를 설정하면 인덱스가 생긴다. 하지만 특정 컬럼에 PK라고 적용된
+테이블의 특정 행(row)에서  PK의 값을 바꾼 후 테이블 전체를 조회하면 PK를 기준으로 정렬된 테이블이 
+조회되지 않고 바뀐 PK를 포함하고 있는 행(row)의 위치는 그대로 유지된다. 
+
+MySQL에서 테이블의 특정 컬럼에 PK를 설정하고 PK의 값을 바꾸고 전체테이블을 조회하면 전체테이블이 PK에 
+의해서 클러스터링 인덱스가 되기 때문에 PK를 기준으로 정렬된 상태로, 그리고 눈에 보이는 상태로 조회가 된다.
+Oracle을 제어하는 SQL Developer에서는 DB스키마 아래에 인덱스 라는 폴더가 있다 그곳에 테이블에 
+적용된 모든 인덱스를 확인할 수 있다.
+
+이런것도 있었다. 현재 오라클 엔진에 대한 설정을 어떻게 하면 오라클 역시 PK선언하고 특정PK바꾸고
+테이블 전체 조회 하면 정렬된 상태로 즉, 클러스터링 인덱스가 출력이 될 것 같은데,, 거기까지 깊숙하게 학습하는 것은
+비효율적이라고 생각한다. 
+
+이 강의에서 다루는 내용은 MySQL에서 PK설정을 하면 해당테이블이 인덱스(특정 컬럼을 기준으로 정렬된 표)가 되어서
+수정 쿼리로 PK의 값을 바꾼 후 ORDER BY 하지 않고 전체 조회 하면 해당테이블
+
+(클러스터링 인덱스, MySQL에서는 인덱스가 시스템 내부에 생기기 때문에 눈에 보이지 않지만 원본테이블이 PK를 
+ 기준으로 정렬된 상태로 나온다고 해서 클러스터링 인덱스 라고 부른다.
+PK는 클러스터링 인덱스 라고 생각해도 된다. 클러스터링 인덱스는 PK 밖에 없기 때문이다.) 
+
+즉, 클러스터링 인덱스가 PK를 기준으로 정렬된 상태로 조회 된다는 것을 확인하는 그런 수업이다.
+
+**************************************************************************
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE users(
+	id INT PRIMARY KEY,
+	name VARCHAR(100)
+);
+
+INSERT INTO users VALUES
+(1, 'a'),
+(3, 'b'),
+(5, 'c'),
+(7, 'c')
+
+SELECT * FROM users;
+
+UPDATE users SET id=2 WHERE id=7;
+
+SELECT * FROM users;
+
+-- 특정 테이블 인덱스 조회
+-- SHOW INDEX FROM 테이블명;
+SHOW INDEX FROM users;
